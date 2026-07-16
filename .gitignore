@@ -5,6 +5,7 @@ __pycache__/
 .vscode/
 .idea/
 *.log
-data/processed/
+data/processed/.xlsx
 models/
 .venv/
+data/raw/.xlsx
