@@ -1,5 +1,6 @@
 import os
 import io
+import pandas as pd
 
 import matplotlib.pyplot as plt
 
@@ -235,3 +236,142 @@ class Visualizer:
         # Clear and close after saving
         plt.clf()
         plt.close()
+    
+    def __init__(self, merged):
+
+        self.data = merged
+
+    def impact_direction(self):
+
+        plt.figure(figsize=(6,4))
+
+        sns.countplot(
+
+            data=self.data,
+
+            x="impact_direction"
+
+        )
+
+        plt.title("Impact Direction")
+
+        plt.show()
+
+    def impact_magnitude(self):
+
+        plt.figure(figsize=(6,4))
+
+        sns.countplot(
+
+            data=self.data,
+
+            x="impact_magnitude"
+
+        )
+
+        plt.title("Impact Magnitude")
+
+        plt.show()
+
+    def lag_distribution(self):
+
+        plt.figure(figsize=(8,5))
+
+        sns.histplot(
+
+            self.data["lag_months"],
+
+            bins=10
+
+        )
+
+        plt.title("Lag Distribution")
+
+        plt.show()
+
+    def event_heatmap(self):
+
+        matrix = pd.crosstab(
+
+            self.data["category"],
+
+            self.data["related_indicator"]
+
+        )
+
+        plt.figure(figsize=(12,6))
+
+        sns.heatmap(
+
+            matrix,
+
+            annot=True,
+
+            cmap="Blues"
+
+        )
+
+        plt.show()
+
+
+class ForecastVisualization:
+
+    def __init__(self, history, future):
+
+        self.history = history
+
+        self.future = future
+
+    def forecast_plot(self):
+
+        plt.figure(figsize=(10,5))
+
+        plt.plot(
+
+            self.history["year"],
+
+            self.history["value_numeric"],
+
+            marker="o",
+
+            label="Historical"
+
+        )
+
+        plt.plot(
+
+            self.future["year"],
+
+            self.future["base"],
+
+            marker="s",
+
+            label="Forecast"
+
+        )
+
+        plt.fill_between(
+
+            self.future["year"],
+
+            self.future["pessimistic"],
+
+            self.future["optimistic"],
+
+            alpha=0.25,
+
+            label="Forecast Range"
+
+        )
+
+        plt.xlabel("Year")
+
+        plt.ylabel("Account Ownership (%)")
+
+        plt.title("Financial Inclusion Forecast")
+
+        plt.legend()
+
+        plt.grid(True)
+
+        plt.show()
