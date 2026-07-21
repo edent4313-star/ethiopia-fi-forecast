@@ -1,3 +1,4 @@
+import pandas as pd
 class Insight:
 
     def __init__(self,data):
@@ -35,29 +36,35 @@ class Insight:
     def __init__(self, data):
 
         self.data = data.copy()
-
+        
     def generate(self):
-
-        insights = []
-
-        observations = self.data[
-            self.data["record_type"] == "observation"
-        ]
-
-        events = self.data[
-            self.data["record_type"] == "event"
-        ]
-
-        # Observation period
+        observations = self.data[self.data["record_type"] == "observation"].copy()
+    
+        # 1. Convert with flexibility
+        observations["observation_date"] = pd.to_datetime(
+        observations["observation_date"], 
+        errors='coerce'
+    )
+    
+        # 2. Drop any rows that failed to convert (NaT)
+        observations = observations.dropna(subset=["observation_date"])
+    
+        # 3. Now min/max will work perfectly
         start = observations["observation_date"].min()
         end = observations["observation_date"].max()
-
-        insights.append(
+    
+        insights = []
+    
+        # Check for NaT (Not a Time) to prevent crashes if data is empty
+        if pd.notnull(start) and pd.notnull(end):
+            insights.append(
             f"The dataset contains observations from {start.date()} to {end.date()}."
-        )
+            )
 
         # Most common pillar
         pillar = observations["pillar"].value_counts().idxmax()
+
+        events = self.data[self.data["record_type"] == "event"]
 
         insights.append(
             f"The {pillar} pillar has the largest number of observations."
