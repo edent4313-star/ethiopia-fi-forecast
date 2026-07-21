@@ -7,3 +7,4 @@ openpyxl
 scikit-learn
 pytest
 jupyter
+streamlit
